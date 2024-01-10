@@ -1,17 +1,21 @@
 package com.hfad.headachediary
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CalendarView
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
+import androidx.fragment.app.Fragment
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import kotlin.time.Duration.Companion.days
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -33,6 +37,26 @@ class AddNewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_new, container, false)
+
+        val calendar: CalendarView = view.findViewById(R.id.calendar_headache)
+        val dateHeadache: TextView = view.findViewById(R.id.date_headache)
+        calendar.setOnDateChangeListener(object : CalendarView.OnDateChangeListener{
+            override fun onSelectedDayChange(
+                view: CalendarView,
+                year: Int,
+                month: Int,
+                dayOfMonth: Int
+            ) {
+                //not input only save in db
+                val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                    .parse("$dayOfMonth-${month + 1}-$year")
+                if (date != null) {
+                    dateHeadache.text = date.time.toString()
+                }
+            }
+
+        })
+
         val localization: LinearLayout = view.findViewById(R.id.localization)
         val localizationValue = resources.getStringArray(R.array.localization_pain)
         val localizationId = resources.getStringArray(R.array.localization_id)

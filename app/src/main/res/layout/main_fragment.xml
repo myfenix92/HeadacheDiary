@@ -4,8 +4,7 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_record"
-        android:layout_marginTop="?android:attr/actionBarSize"
+        android:id="@+id/list_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

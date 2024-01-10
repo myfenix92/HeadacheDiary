@@ -13,4 +13,5 @@ import androidx.room.RoomDatabase
     ]
 )
 abstract class HeadacheDatabase : RoomDatabase() {
+    abstract fun getHeadacheDao(): HeadacheDao
 }
