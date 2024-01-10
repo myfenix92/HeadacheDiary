@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">HeadacheDiary</string>
+    <string name="add_new">add new record</string>
+    <string name="localization">Локализация боли:</string>
+    <string name="character">Вид боли:</string>
+    <string name="duration_pain">Длительность:</string>
+    <string name="medicines">Лекарства:</string>
+    <string name="medicines_name">Введите название лекарства…</string>
+    <string name="medicines_dose">Введите дозировку лекарства…</string>
+    <string name="medicines_count">Количество:</string>
+    <string name="ok_btn">ОК</string>
+    <string name="cancel_btn">Отмена</string>
+
+    <string-array name="localization_pain">
+        <item>лоб</item>
+        <item>височная область слева</item>
+        <item>височная область справа</item>
+        <item>затылочная область</item>
+        <item>теменная область</item>
+        <item>область глаз</item>
+    </string-array>
+    <string-array name="character_pain">
+        <item>сжимающая</item>
+        <item>пульсирующая</item>
+        <item>давящая</item>
+        <item>ноющая</item>
+        <item>распирающая</item>
+        <item>тупая</item>
+        <item>острая</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
