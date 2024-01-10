@@ -10,6 +10,7 @@
     <string name="medicines_count">Количество:</string>
     <string name="ok_btn">ОК</string>
     <string name="cancel_btn">Отмена</string>
+    <string name="duration_value">%1$d ч</string>
 
     <string-array name="localization_pain">
         <item>лоб</item>
@@ -18,6 +19,14 @@
         <item>затылочная область</item>
         <item>теменная область</item>
         <item>область глаз</item>
+    </string-array>
+    <string-array name="localization_id">
+        <item>forehead</item>
+        <item>temporal_left</item>
+        <item>temporal_right</item>
+        <item>occipital_region</item>
+        <item>parietal_region</item>
+        <item>eye_area</item>
     </string-array>
     <string-array name="character_pain">
         <item>сжимающая</item>
@@ -28,6 +37,13 @@
         <item>тупая</item>
         <item>острая</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="character_id">
+        <item>constrictive</item>
+        <item>throbbing</item>
+        <item>pressing</item>
+        <item>aching</item>
+        <item>bursting</item>
+        <item>dull</item>
+        <item>sharp</item>
+    </string-array>
 </resources>

@@ -14,16 +14,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        val listView = findViewById<ListView>(R.id.localization)
-//
-//        val localizationPain = resources.getStringArray(R.array.localization_pain)
-//
-//        val adapter: ArrayAdapter<String> = ArrayAdapter(
-//            this,
-//            android.R.layout.simple_list_item_1, localizationPain
-//        )
-//
-//        listView.adapter = adapter
         val fabBtn = findViewById<FloatingActionButton>(R.id.fab_add)
         fabBtn.setOnClickListener {
             addNewRecord()
@@ -31,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun addNewRecord() {
-        supportFragmentManager.beginTransaction().replace(R.id.main_container, AddNewFragment()).commit()
+    private fun addNewRecord() {
+        supportFragmentManager.beginTransaction().add(R.id.main_container, AddNewFragment()).commit()
     }
 }
