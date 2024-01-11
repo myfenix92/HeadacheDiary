@@ -109,6 +109,11 @@ class AddNewFragment : Fragment() {
         cancelBtn.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
         }
+
+        val okBtn: Button = view.findViewById(R.id.add_btn)
+        okBtn.setOnClickListener {
+            activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_container, MainFragment())?.commit()
+        }
         return view
     }
 

@@ -6,6 +6,7 @@ import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
@@ -18,6 +19,8 @@ class MainActivity : AppCompatActivity() {
         fabBtn.setOnClickListener {
             addNewRecord()
         }
+
+        supportFragmentManager.beginTransaction().add(R.id.main_container, MainFragment()).commit()
 
     }
 
