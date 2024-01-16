@@ -1,4 +1,4 @@
-package com.hfad.headachediary
+package com.hfad.headachediary.Entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

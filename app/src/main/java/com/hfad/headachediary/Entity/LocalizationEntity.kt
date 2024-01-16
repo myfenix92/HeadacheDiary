@@ -1,13 +1,14 @@
-package com.hfad.headachediary
+package com.hfad.headachediary.Entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.hfad.headachediary.Entity.HeadacheEntity
 
 @Entity(
-    tableName = "medicines",
+    tableName = "localization",
     indices = [Index("id")],
     foreignKeys = [
         ForeignKey(
@@ -16,10 +17,9 @@ import androidx.room.PrimaryKey
             childColumns = ["id_item"]
         )
     ])
-data class MedicinesEntity(
+
+data class LocalizationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "id_item") val idItem: Long,
-    @ColumnInfo(name = "medicines_name") val medicinesName: String,
-    @ColumnInfo(name = "medicines_dose") val medicinesDose: Int,
-    @ColumnInfo(name = "medicines_count") val medicinesCount: Int
+    @ColumnInfo(name = "localization_item") val localizationItem: String
 )

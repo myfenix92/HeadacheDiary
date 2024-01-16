@@ -4,20 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CalendarView
-import android.widget.CheckBox
-import android.widget.LinearLayout
-import android.widget.NumberPicker
-import android.widget.SeekBar
-import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
-import kotlin.time.Duration.Companion.days
+import com.hfad.headachediary.VM.HeadacheViewModel
+//import com.hfad.headachediary.VM.HeadacheViewModelFactory
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -26,6 +18,10 @@ class MainFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private val headacheViewModel: HeadacheViewModel by activityViewModels()
+//    {
+//        HeadacheViewModelFactory((requireActivity().application as HeadacheApplication).repository)
+//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -44,6 +40,9 @@ class MainFragment : Fragment() {
         val adapter = activity?.applicationContext?.let { ItemAdapter(it) }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity?.applicationContext)
+//        headacheViewModel.allItems.observe(viewLifecycleOwner, Observer { items ->
+//            items?.let { adapter?.setItems(it) }
+//        })
         return view
     }
 

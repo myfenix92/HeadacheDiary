@@ -1,5 +1,6 @@
 package com.hfad.headachediary
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,15 +8,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.CheckBox
+import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.NumberPicker
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Locale
-import kotlin.time.Duration.Companion.days
+
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -94,25 +95,43 @@ class AddNewFragment : Fragment() {
         })
 
 
-        val medicineCount: NumberPicker = view.findViewById(R.id.medicine_count)
-        val medicineCountValue: TextView = view.findViewById(R.id.medicine_count_value)
-        medicineCount.minValue = 1
-        medicineCount.maxValue = 10
-        medicineCount.wrapSelectorWheel = true
-        medicineCountValue.text = medicineCount.minValue.toString()
 
-        medicineCount.setOnValueChangedListener { picker, oldVal, newVal ->
-            medicineCountValue.text = "$newVal"
+
+        val addMedicinesBtn: ImageButton = view.findViewById(R.id.add_medicines)
+        val newMedicines: LinearLayout = view.findViewById(R.id.medicines)
+        val child: View = layoutInflater.inflate(R.layout.medicines_layout, null)
+
+        addMedicinesBtn.setOnClickListener {
+            val medicineCount: SeekBar = child.findViewById(R.id.medicine_count)
+            val medicineCountValue: TextView = child.findViewById(R.id.medicine_count_value)
+            medicineCountValue.text = "1"
+            medicineCount.progress = 1
+            medicineCount.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    medicineCountValue.text = progress.toString()
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+
+            })
+            newMedicines.addView(child)
         }
 
         val cancelBtn: Button = view.findViewById(R.id.cancel_btn)
         cancelBtn.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+            val listItem: RecyclerView? = activity?.findViewById(R.id.list_item)
+            listItem?.visibility = RecyclerView.VISIBLE
         }
 
         val okBtn: Button = view.findViewById(R.id.add_btn)
         okBtn.setOnClickListener {
-            activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_container, MainFragment())?.commit()
+            val intent = Intent(activity?.applicationContext, MainActivity::class.java)
+            startActivity(intent)
         }
         return view
     }

@@ -81,46 +81,20 @@
             android:padding="5dp"
             android:text="@string/medicines"/>
 
-        <EditText
-            android:id="@+id/medicine_name"
+        <LinearLayout
+            android:id="@+id/medicines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/medicines_name"
-            android:inputType="text"
-            android:textColorHint="#78909C"
-            android:autofillHints="" />
+            android:orientation="vertical"/>
 
-        <EditText
-            android:id="@+id/medicine_dose"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/medicines_dose"
-            android:inputType="number"
-            android:textColorHint="#78909C"
-            android:autofillHints="" />
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp">
-        <TextView
+        <ImageButton
+            android:id="@+id/add_medicines"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/medicines_count"/>
-
-        <TextView
-            android:id="@+id/medicine_count_value"
-            android:padding="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-        <NumberPicker
-            android:id="@+id/medicine_count"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:src="@drawable/add_24px"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/design_default_color_background"
+            android:contentDescription="@string/add_new" />
 
         <LinearLayout
             android:layout_width="match_parent"
