@@ -28,13 +28,15 @@ class MainActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         headacheViewModel.allItems.observe(this, Observer {item ->
-            item?.let { adapter.setItems(it) }
+            val list = item.sortedBy { it.item.dateItem }
+            list.let { adapter.setItems(it) }
         })
 
         val fabBtn = findViewById<FloatingActionButton>(R.id.fab_add)
         fabBtn.setOnClickListener {
             addNewRecord()
         }
+
 
     }
 

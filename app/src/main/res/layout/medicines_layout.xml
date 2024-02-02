@@ -40,11 +40,10 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <SeekBar
+        <Spinner
             android:id="@+id/medicine_count"
             android:padding="5dp"
-            android:max="10"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:entries="@array/count_medicines_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 </LinearLayout>

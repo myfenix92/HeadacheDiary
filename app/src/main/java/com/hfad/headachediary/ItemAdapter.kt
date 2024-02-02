@@ -12,6 +12,8 @@ import com.hfad.headachediary.DB.HeadacheDao
 import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.HeadacheTuple
 import com.hfad.headachediary.Entity.MedicinesEntity
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ItemAdapter(
     private val context: Context,
@@ -53,11 +55,14 @@ class ItemAdapter(
             characterList.add(current.characterList[i].characterItem)
         }
         for (i in 0 until current.medicinesList.size) {
-            medicinesList.add("${current.medicinesList[i].medicinesName}, " +
-                    "${current.medicinesList[i].medicinesDose}, ${current.medicinesList[i].medicinesCount}")
+            medicinesList.add("${current.medicinesList[i].medicinesName ?: "-"}, " +
+                    "${current.medicinesList[i].medicinesDose ?: 0} ${holder.itemView.context.getString(R.string.dose_value)}, " +
+                    "${current.medicinesList[i].medicinesCount ?: 0} ${holder.itemView.context.getString(R.string.count_pieces)}")
         }
+        val date = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+        val formatDate = date.format(current.item.dateItem)
         holder.dateItem.text = holder.itemView.context.getString(R.string.text_date,
-            current.item.dateItem.toString())
+            formatDate.toString())
         holder.localizationItem.text = holder.itemView.context.getString(R.string.text_localization,
             localizationList.joinToString(separator = ", "))
         holder.characterItem.text = holder.itemView.context.getString(R.string.text_character,

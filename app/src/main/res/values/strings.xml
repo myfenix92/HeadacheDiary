@@ -11,12 +11,22 @@
     <string name="ok_btn">ОК</string>
     <string name="cancel_btn">Отмена</string>
     <string name="duration_value">%1$d ч</string>
+    <string name="count_pieces">шт.</string>
+    <string name="dose_value">мг</string>
 
     <string name="text_date">Дата: %1$s</string>
     <string name="text_localization">Где болело: %1$s</string>
     <string name="text_character">Как болело: %1$s</string>
-    <string name="text_duration">Продолжительность боли: %1$s</string>
+    <string name="text_duration">Продолжительность боли: %1$s ч.</string>
     <string name="text_medicines">Лекарства: %1$s</string>
+
+    <string-array name="count_medicines_item">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
 
     <string-array name="localization_pain">
         <item>лоб</item>

@@ -20,4 +20,6 @@ data class CharacterEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "id_item") val idItem: Long,
     @ColumnInfo(name = "character_item") val characterItem: String
-)
+) {
+    constructor(idItem: Long, characterItem: String) : this(0, idItem, characterItem)
+}

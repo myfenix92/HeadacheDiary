@@ -1,6 +1,7 @@
 package com.hfad.headachediary.VM
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
@@ -11,14 +12,20 @@ import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.HeadacheTuple
 import com.hfad.headachediary.Entity.MedicinesEntity
 import com.hfad.headachediary.Entity.LocalizationEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HeadacheViewModel(private val repository: HeadacheRepository) : ViewModel() {
 
     val allItems: LiveData<List<HeadacheTuple>> = repository.allItems.asLiveData()
 
-    fun insertItem(headacheEntity: HeadacheEntity) = viewModelScope.launch {
-        repository.insertItem(headacheEntity)
+    fun insertItem(headacheEntity: HeadacheEntity): MutableLiveData<Long> {
+        val insertedItemId = MutableLiveData<Long>()
+        viewModelScope.launch {
+            insertedItemId.value = repository.insertItem(headacheEntity)
+        }
+        return insertedItemId
     }
 
     fun insertLocalization(localizationEntity: LocalizationEntity) = viewModelScope.launch {

@@ -30,28 +30,28 @@ abstract class HeadacheDatabase : RoomDatabase() {
             super.onCreate(db)
             INSTANCE?.let { db ->
                 scope.launch {
-                    var headacheDao = db.getHeadacheDao()
-                    var headacheEntity = HeadacheEntity(1, 1709, 4)
-                    headacheDao.insertNewItem(headacheEntity)
-                    var localizationEntity = LocalizationEntity(1, 1, "temporal")
-                    headacheDao.insertNewLocalization(localizationEntity)
-                    var localizationEntity1 = LocalizationEntity(2, 1, "radial")
-                    headacheDao.insertNewLocalization(localizationEntity1)
-                    var characterEntity = CharacterEntity(1, 1, "sharped")
-                    headacheDao.insertNewCharacter(characterEntity)
-                    var medicinesEntity = MedicinesEntity(1, 1, "analgin", 30, 2)
-                    headacheDao.insertNewMedicines(medicinesEntity)
-
-                    var headacheEntity2 = HeadacheEntity(2, 1745, 43)
-                    headacheDao.insertNewItem(headacheEntity2)
-                    var localizationEntity2 = LocalizationEntity(3, 2, "temporal12")
-                    headacheDao.insertNewLocalization(localizationEntity2)
-                    var localizationEntity12 = LocalizationEntity(4, 2, "radial12")
-                    headacheDao.insertNewLocalization(localizationEntity12)
-                    var characterEntity2 = CharacterEntity(2, 2, "strong")
-                    headacheDao.insertNewCharacter(characterEntity2)
-                    var medicinesEntity2 = MedicinesEntity(2, 2, "ketorax", 300, 1)
-                    headacheDao.insertNewMedicines(medicinesEntity2)
+//                    var headacheDao = db.getHeadacheDao()
+//                    var headacheEntity = HeadacheEntity(1, 1709, 4)
+//                    headacheDao.insertNewItem(headacheEntity)
+//                    var localizationEntity = LocalizationEntity(1, 1, "temporal")
+//                    headacheDao.insertNewLocalization(localizationEntity)
+//                    var localizationEntity1 = LocalizationEntity(2, 1, "radial")
+//                    headacheDao.insertNewLocalization(localizationEntity1)
+//                    var characterEntity = CharacterEntity(1, 1, "sharped")
+//                    headacheDao.insertNewCharacter(characterEntity)
+//                    var medicinesEntity = MedicinesEntity(1, 1, "analgin", 30, 2)
+//                    headacheDao.insertNewMedicines(medicinesEntity)
+//
+//                    var headacheEntity2 = HeadacheEntity(2, 1745, 43)
+//                    headacheDao.insertNewItem(headacheEntity2)
+//                    var localizationEntity2 = LocalizationEntity(3, 2, "temporal12")
+//                    headacheDao.insertNewLocalization(localizationEntity2)
+//                    var localizationEntity12 = LocalizationEntity(4, 2, "radial12")
+//                    headacheDao.insertNewLocalization(localizationEntity12)
+//                    var characterEntity2 = CharacterEntity(2, 2, "strong")
+//                    headacheDao.insertNewCharacter(characterEntity2)
+//                    var medicinesEntity2 = MedicinesEntity(2, 2, "ketorax", 300, 1)
+//                    headacheDao.insertNewMedicines(medicinesEntity2)
                 }
             }
         }
@@ -66,7 +66,7 @@ abstract class HeadacheDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     HeadacheDatabase::class.java,
-                    "db-6"
+                    "db-10"
                 ).addCallback(HeadacheDBCallback(scope)).build()
                 INSTANCE = instance
                 instance

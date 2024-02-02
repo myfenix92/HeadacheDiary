@@ -1,6 +1,7 @@
 package com.hfad.headachediary
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hfad.headachediary.VM.HeadacheViewModel
+import com.hfad.headachediary.VM.HeadacheViewModelFactory
+
 //import com.hfad.headachediary.VM.HeadacheViewModelFactory
 
 private const val ARG_PARAM1 = "param1"
@@ -19,9 +22,9 @@ class MainFragment : Fragment() {
     private var param2: String? = null
 
     private val headacheViewModel: HeadacheViewModel by activityViewModels()
-//    {
-//        HeadacheViewModelFactory((requireActivity().application as HeadacheApplication).repository)
-//    }
+    {
+        HeadacheViewModelFactory((activity?.application as HeadacheApplication).repository)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -43,6 +46,7 @@ class MainFragment : Fragment() {
 //        headacheViewModel.allItems.observe(viewLifecycleOwner, Observer { items ->
 //            items?.let { adapter?.setItems(it) }
 //        })
+
         return view
     }
 

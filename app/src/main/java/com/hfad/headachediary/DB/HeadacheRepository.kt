@@ -12,8 +12,8 @@ class HeadacheRepository(private val headacheDao: HeadacheDao) {
     val allItems: Flow<List<HeadacheTuple>> = headacheDao.getAllItems()
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertItem(headacheEntity: HeadacheEntity) {
-        headacheDao.insertNewItem(headacheEntity)
+    suspend fun insertItem(headacheEntity: HeadacheEntity): Long {
+        return headacheDao.insertNewItem(headacheEntity)
     }
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

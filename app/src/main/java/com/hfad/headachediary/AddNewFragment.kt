@@ -1,20 +1,43 @@
 package com.hfad.headachediary
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.SeekBar
+import android.widget.Spinner
 import android.widget.TextView
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.core.view.get
+import androidx.core.view.size
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import com.hfad.headachediary.Entity.CharacterEntity
+import com.hfad.headachediary.Entity.HeadacheEntity
+import com.hfad.headachediary.Entity.LocalizationEntity
+import com.hfad.headachediary.Entity.MedicinesEntity
+import com.hfad.headachediary.VM.HeadacheViewModel
+import com.hfad.headachediary.VM.HeadacheViewModelFactory
+import kotlinx.coroutines.job
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 
@@ -24,6 +47,10 @@ private const val ARG_PARAM2 = "param2"
 class AddNewFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
+    private val headacheViewModel: HeadacheViewModel by activityViewModels<HeadacheViewModel>()
+//    <HeadacheViewModel>{
+//        HeadacheViewModelFactory((activity?.application as HeadacheApplication).repository)
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,23 +67,14 @@ class AddNewFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_add_new, container, false)
 
         val calendar: CalendarView = view.findViewById(R.id.calendar_headache)
-        val dateHeadache: TextView = view.findViewById(R.id.date_headache)
-        calendar.setOnDateChangeListener(object : CalendarView.OnDateChangeListener{
-            override fun onSelectedDayChange(
-                view: CalendarView,
-                year: Int,
-                month: Int,
-                dayOfMonth: Int
-            ) {
-                //not input only save in db
-                val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-                    .parse("$dayOfMonth-${month + 1}-$year")
-                if (date != null) {
-                    dateHeadache.text = date.time.toString()
-                }
+        var dateHeadache: Long = Calendar.getInstance().time.time
+        calendar.setOnDateChangeListener { _, year, month, dayOfMonth -> //not input only save in db
+            val date = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+                .parse("$dayOfMonth-${month + 1}-$year")
+            if (date != null) {
+                dateHeadache = date.time
             }
-
-        })
+        }
 
         val localization: LinearLayout = view.findViewById(R.id.localization)
         val localizationValue = resources.getStringArray(R.array.localization_pain)
@@ -80,6 +98,9 @@ class AddNewFragment : Fragment() {
 
         val duration: SeekBar = view.findViewById(R.id.duration)
         val durationValue: TextView = view.findViewById(R.id.duration_value)
+        duration.min = 1
+        duration.progress = 1
+        durationValue.text = getString(R.string.duration_value, duration.progress)
 
         duration.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -94,30 +115,32 @@ class AddNewFragment : Fragment() {
 
         })
 
-
-
-
         val addMedicinesBtn: ImageButton = view.findViewById(R.id.add_medicines)
         val newMedicines: LinearLayout = view.findViewById(R.id.medicines)
         val child: View = layoutInflater.inflate(R.layout.medicines_layout, null)
-
+        val medicineName: EditText = child.findViewById(R.id.medicine_name)
+        val medicineDose: EditText = child.findViewById(R.id.medicine_dose)
+        val medicineCount: Spinner = child.findViewById(R.id.medicine_count)
+        val medicineCountValue: TextView = child.findViewById(R.id.medicine_count_value)
         addMedicinesBtn.setOnClickListener {
-            val medicineCount: SeekBar = child.findViewById(R.id.medicine_count)
-            val medicineCountValue: TextView = child.findViewById(R.id.medicine_count_value)
-            medicineCountValue.text = "1"
-            medicineCount.progress = 1
-            medicineCount.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    medicineCountValue.text = progress.toString()
+
+
+
+            medicineCount.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    medicineCountValue.text = medicineCount.selectedItem.toString()
                 }
 
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    medicineCountValue.text = "1"
                 }
 
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                }
-
-            })
+            }
             newMedicines.addView(child)
         }
 
@@ -131,7 +154,47 @@ class AddNewFragment : Fragment() {
         val okBtn: Button = view.findViewById(R.id.add_btn)
         okBtn.setOnClickListener {
             val intent = Intent(activity?.applicationContext, MainActivity::class.java)
-            startActivity(intent)
+            var newId: Long
+            headacheViewModel.insertItem(HeadacheEntity(dateHeadache, duration.progress)).observe(viewLifecycleOwner, Observer {
+                newId = it
+                for (i in localizationId.indices) {
+                    val localizationCheckBox: CheckBox = localization.getChildAt(i) as CheckBox
+                    if (localizationCheckBox.isChecked) {
+                        headacheViewModel.insertLocalization(LocalizationEntity(newId,
+                            localizationCheckBox.text.toString()))
+                    }
+                }
+
+                for (i in characterId.indices) {
+                    val characterCheckBox: CheckBox = character.getChildAt(i) as CheckBox
+                    if (characterCheckBox.isChecked) {
+                        headacheViewModel.insertCharacter(
+                            CharacterEntity(newId,
+                            characterCheckBox.text.toString())
+                        )
+                    }
+                }
+                val name = medicineName.text.toString().ifEmpty {
+                    "-"
+                }
+                val dose = if (medicineDose.text.toString().isEmpty()) {
+                      null
+                } else {
+                    medicineDose.text.toString().toInt()
+                }
+                val countMedicines = if (medicineCountValue.text.toString().isEmpty()) {
+                    null
+                } else {
+                    medicineCountValue.text.toString().toInt()
+                }
+
+                headacheViewModel.insertMedicines(MedicinesEntity(newId,
+                    name,
+                    dose,
+                    countMedicines))
+            })
+
+                startActivity(intent)
         }
         return view
     }

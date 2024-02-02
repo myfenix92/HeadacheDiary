@@ -22,4 +22,6 @@ data class LocalizationEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "id_item") val idItem: Long,
     @ColumnInfo(name = "localization_item") val localizationItem: String
-)
+) {
+    constructor(idItem: Long, localizationItem: String) : this(0, idItem, localizationItem)
+}

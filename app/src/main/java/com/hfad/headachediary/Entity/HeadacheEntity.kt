@@ -12,4 +12,6 @@ data class HeadacheEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "date_item") val dateItem: Long,
     @ColumnInfo(name = "duration") val duration: Int
-)
+) {
+    constructor(dateItem: Long, duration: Int) : this(0, dateItem, duration)
+}

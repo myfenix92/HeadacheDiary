@@ -20,7 +20,7 @@ interface HeadacheDao {
     fun getAllItems(): Flow<List<HeadacheTuple>>
 
     @Insert
-    suspend fun insertNewItem(headacheEntity: HeadacheEntity)
+    suspend fun insertNewItem(headacheEntity: HeadacheEntity): Long
 
     @Insert
     suspend fun insertNewLocalization(localizationEntity: LocalizationEntity)
