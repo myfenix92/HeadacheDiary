@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.hfad.headachediary.Entity.CharacterEntity
 import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.HeadacheTuple
@@ -30,4 +31,16 @@ interface HeadacheDao {
 
     @Insert
     suspend fun insertNewMedicines(medicinesEntity: MedicinesEntity)
+
+    @Update
+    fun updateItem(headacheEntity: HeadacheEntity)
+
+    @Update
+    fun updateLocalization(localizationEntity: LocalizationEntity)
+
+    @Update
+    fun updateCharacter(characterEntity: CharacterEntity)
+
+    @Update
+    fun updateMedicines(medicinesEntity: MedicinesEntity)
 }

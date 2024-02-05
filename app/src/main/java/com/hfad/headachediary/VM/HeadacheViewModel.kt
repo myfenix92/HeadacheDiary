@@ -12,6 +12,7 @@ import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.HeadacheTuple
 import com.hfad.headachediary.Entity.MedicinesEntity
 import com.hfad.headachediary.Entity.LocalizationEntity
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,6 +39,22 @@ class HeadacheViewModel(private val repository: HeadacheRepository) : ViewModel(
 
     fun insertMedicines(medicinesEntity: MedicinesEntity) = viewModelScope.launch {
         repository.insertMedicines(medicinesEntity)
+    }
+
+    fun updateItem(headacheEntity: HeadacheEntity) = CoroutineScope(Dispatchers.IO).launch {
+        repository.updateItem(headacheEntity)
+    }
+
+    fun updateLocalization(localizationEntity: LocalizationEntity) = CoroutineScope(Dispatchers.IO).launch {
+        repository.updateLocalization(localizationEntity)
+    }
+
+    fun updateCharacter(characterEntity: CharacterEntity) = CoroutineScope(Dispatchers.IO).launch {
+        repository.updateCharacter(characterEntity)
+    }
+
+    fun updateMedicines(medicinesEntity: MedicinesEntity) = CoroutineScope(Dispatchers.IO).launch {
+        repository.updateMedicines(medicinesEntity)
     }
 }
 class HeadacheViewModelFactory(private val repository: HeadacheRepository) : ViewModelProvider.Factory {

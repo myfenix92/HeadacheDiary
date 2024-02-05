@@ -30,4 +30,24 @@ class HeadacheRepository(private val headacheDao: HeadacheDao) {
     suspend fun insertMedicines(medicinesEntity: MedicinesEntity) {
         headacheDao.insertNewMedicines(medicinesEntity)
     }
+
+    @WorkerThread
+    fun updateItem(headacheEntity: HeadacheEntity) {
+        headacheDao.updateItem(headacheEntity)
+    }
+
+    @WorkerThread
+    fun updateLocalization(localizationEntity: LocalizationEntity) {
+        headacheDao.updateLocalization(localizationEntity)
+    }
+
+    @WorkerThread
+    fun updateCharacter(characterEntity: CharacterEntity) {
+        headacheDao.updateCharacter(characterEntity)
+    }
+
+    @WorkerThread
+    fun updateMedicines(medicinesEntity: MedicinesEntity) {
+        headacheDao.updateMedicines(medicinesEntity)
+    }
 }

@@ -40,8 +40,8 @@ class MainFragment : Fragment() {
         val view = inflater.inflate(R.layout.main_fragment, container, false)
 
         val recyclerView: RecyclerView = view.findViewById(R.id.list_item)
-        val adapter = activity?.applicationContext?.let { ItemAdapter(it) }
-        recyclerView.adapter = adapter
+     //   val adapter = activity?.applicationContext?.let { ItemAdapter(it) }
+    //    recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(activity?.applicationContext)
 //        headacheViewModel.allItems.observe(viewLifecycleOwner, Observer { items ->
 //            items?.let { adapter?.setItems(it) }

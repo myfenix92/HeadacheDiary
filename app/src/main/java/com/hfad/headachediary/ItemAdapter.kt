@@ -17,7 +17,12 @@ import java.util.Locale
 
 class ItemAdapter(
     private val context: Context,
+    private val listener: Listener,
 ): RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+
+    interface Listener {
+        fun onClick(data: HeadacheTuple, position: Int)
+    }
 
     private var items = emptyList<HeadacheTuple>()
     inner class ViewHolder(itemsView: View) : RecyclerView.ViewHolder(itemsView) {
@@ -26,6 +31,7 @@ class ItemAdapter(
         var durationItem: TextView
         var characterItem: TextView
         var medicinesItem: TextView
+        var cardView: CardView
 
         init {
             dateItem = itemsView.findViewById(R.id.date_item)
@@ -33,6 +39,7 @@ class ItemAdapter(
             durationItem = itemsView.findViewById(R.id.duration_item)
             characterItem = itemsView.findViewById(R.id.character_item)
             medicinesItem = itemsView.findViewById(R.id.medicines_item)
+            cardView = itemsView.findViewById(R.id.card_item)
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemAdapter.ViewHolder {
@@ -44,7 +51,7 @@ class ItemAdapter(
 
     override fun onBindViewHolder(holder: ItemAdapter.ViewHolder, position: Int) {
         val current = items[position]
-
+        val cardView = holder.cardView
         val localizationList = mutableListOf<String>()
         val characterList = mutableListOf<String>()
         val medicinesList = mutableListOf<String>()
@@ -71,6 +78,8 @@ class ItemAdapter(
             current.item.duration.toString())
         holder.medicinesItem.text = holder.itemView.context.getString(R.string.text_medicines,
             medicinesList.joinToString(separator = ", "))
+
+        cardView.setOnClickListener { listener.onClick(current, position) }
     }
 
     override fun getItemCount(): Int {
