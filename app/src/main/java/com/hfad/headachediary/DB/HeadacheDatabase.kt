@@ -9,6 +9,7 @@ import com.hfad.headachediary.Entity.CharacterEntity
 import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.MedicinesEntity
 import com.hfad.headachediary.Entity.LocalizationEntity
+import com.hfad.headachediary.Entity.MedicinesDoseEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -20,6 +21,7 @@ import kotlinx.coroutines.launch
         LocalizationEntity::class,
         CharacterEntity::class,
         MedicinesEntity::class,
+        MedicinesDoseEntity::class,
     ]
 )
 abstract class HeadacheDatabase : RoomDatabase() {
@@ -66,7 +68,7 @@ abstract class HeadacheDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     HeadacheDatabase::class.java,
-                    "db-10"
+                    "db-11"
                 ).addCallback(HeadacheDBCallback(scope)).build()
                 INSTANCE = instance
                 instance

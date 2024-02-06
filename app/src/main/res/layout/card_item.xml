@@ -15,31 +15,26 @@
 
         <TextView
             android:id="@+id/date_item"
-            android:text="Дата: 12-12-2023"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/localization_item"
-            android:text="Где болит: лоб, височная область слева, затылочная область"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/character_item"
-            android:text="Как болит: сжимающая, острая"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/duration_item"
-            android:text="Продолжительность: 5ч"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/medicines_item"
-            android:text="Лекарства: Ибупрофен 400, 2 раза"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

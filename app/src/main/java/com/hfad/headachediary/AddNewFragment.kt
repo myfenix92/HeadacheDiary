@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.CheckBox
@@ -21,10 +22,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.hfad.headachediary.Entity.CharacterEntity
 import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.HeadacheTuple
 import com.hfad.headachediary.Entity.LocalizationEntity
+import com.hfad.headachediary.Entity.MedicinesDoseEntity
 import com.hfad.headachediary.Entity.MedicinesEntity
 import com.hfad.headachediary.VM.HeadacheViewModel
 import kotlinx.coroutines.job
@@ -36,6 +39,7 @@ import java.util.Locale
 
 
 private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
 
 class AddNewFragment : Fragment() {
     private val gson = Gson()
@@ -53,10 +57,13 @@ class AddNewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_new, container, false)
-
         val bundle = arguments
         val message = bundle!!.getString("param1")
-        val deseriz = gson.fromJson(message, HeadacheTuple::class.java)
+        val message2 = bundle.getString("param2")
+        var deseriz = gson.fromJson(message, HeadacheTuple::class.java)
+        val itemType = object : TypeToken<List<MedicinesEntity>>() {}.type
+        var deseriz2 = gson.fromJson<List<MedicinesEntity>>(message2, itemType)
+
 
         val calendar: CalendarView = view.findViewById(R.id.calendar_headache)
         var dateHeadache: Long = Calendar.getInstance().time.time
@@ -94,7 +101,7 @@ class AddNewFragment : Fragment() {
         duration.progress = 1
         durationValue.text = getString(R.string.duration_value, duration.progress)
 
-        duration.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+        duration.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 durationValue.text = getString(R.string.duration_value, progress)
             }
@@ -110,13 +117,46 @@ class AddNewFragment : Fragment() {
         val addMedicinesBtn: ImageButton = view.findViewById(R.id.add_medicines)
         val newMedicines: LinearLayout = view.findViewById(R.id.medicines)
         val child: View = layoutInflater.inflate(R.layout.medicines_layout, null)
-        val medicineName: EditText = child.findViewById(R.id.medicine_name)
+        val medicineName: Spinner = child.findViewById(R.id.medicine_name)
+        val medicineNewName: EditText = child.findViewById(R.id.new_medicine_name)
         val medicineDose: EditText = child.findViewById(R.id.medicine_dose)
         val medicineCount: Spinner = child.findViewById(R.id.medicine_count)
         val medicineCountValue: TextView = child.findViewById(R.id.medicine_count_value)
+        val medicinesNameArray: MutableList<String> = mutableListOf()
+        if (deseriz2.isNotEmpty()) {
+            for (i in deseriz2.indices) {
+                medicinesNameArray.add(deseriz2[i].medicinesName.toString())
+            }
+        }
+        medicinesNameArray.add(getString(R.string.add_new_medicines))
+        val spinnerAdapter = activity?.applicationContext?.let {
+            ArrayAdapter(
+                it,
+                android.R.layout.simple_spinner_item,
+                medicinesNameArray
+            )
+        }
+        medicineName.adapter = spinnerAdapter
         addMedicinesBtn.setOnClickListener {
 
+            medicineName.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    if (medicineName.selectedItem.toString() == getString(R.string.add_new_medicines)) {
+                        medicineNewName.visibility = EditText.VISIBLE
+                    } else {
+                        medicineNewName.visibility = EditText.GONE
+                    }
+                }
 
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+
+            }
 
             medicineCount.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -149,95 +189,144 @@ class AddNewFragment : Fragment() {
             if (message != null) {
                 if (message.isEmpty()) {
                     var newId: Long
-                    headacheViewModel.insertItem(HeadacheEntity(dateHeadache, duration.progress)).observe(viewLifecycleOwner, Observer {
-                        newId = it
-                        for (i in localizationId.indices) {
-                            val localizationCheckBox: CheckBox = localization.getChildAt(i) as CheckBox
-                            if (localizationCheckBox.isChecked) {
-                                headacheViewModel.insertLocalization(LocalizationEntity(newId,
-                                    localizationCheckBox.text.toString()))
+                    headacheViewModel.insertItem(HeadacheEntity(dateHeadache, duration.progress))
+                        .observe(viewLifecycleOwner, Observer {
+                            newId = it
+                            for (i in localizationId.indices) {
+                                val localizationCheckBox: CheckBox =
+                                    localization.getChildAt(i) as CheckBox
+                                if (localizationCheckBox.isChecked) {
+                                    headacheViewModel.insertLocalization(
+                                        LocalizationEntity(
+                                            newId,
+                                            localizationCheckBox.text.toString()
+                                        )
+                                    )
+                                }
                             }
-                        }
 
-                        for (i in characterId.indices) {
-                            val characterCheckBox: CheckBox = character.getChildAt(i) as CheckBox
-                            if (characterCheckBox.isChecked) {
-                                headacheViewModel.insertCharacter(
-                                    CharacterEntity(newId,
-                                        characterCheckBox.text.toString())
-                                )
+                            for (i in characterId.indices) {
+                                val characterCheckBox: CheckBox =
+                                    character.getChildAt(i) as CheckBox
+                                if (characterCheckBox.isChecked) {
+                                    headacheViewModel.insertCharacter(
+                                        CharacterEntity(
+                                            newId,
+                                            characterCheckBox.text.toString()
+                                        )
+                                    )
+                                }
                             }
-                        }
-                        val name = medicineName.text.toString().ifEmpty {
-                            "-"
-                        }
-                        val dose = if (medicineDose.text.toString().isEmpty()) {
-                            null
-                        } else {
-                            medicineDose.text.toString().toInt()
-                        }
-                        val countMedicines = if (medicineCountValue.text.toString().isEmpty()) {
-                            null
-                        } else {
-                            medicineCountValue.text.toString().toInt()
-                        }
+                            val name =
+                                if (medicineName.selectedItem.toString() == getString(R.string.add_new_medicines)) {
+                                    medicineNewName.text.toString()
+                                } else {
+                                    medicineName.selectedItem.toString()
+                                }
+                            var newMedicinesId: Long
+                            headacheViewModel.insertMedicines(MedicinesEntity(newId, name))
+                                .observe(viewLifecycleOwner, Observer {
+                                    newMedicinesId = it
 
-                        headacheViewModel.insertMedicines(MedicinesEntity(newId,
-                            name,
-                            dose,
-                            countMedicines))
-                    })
+                                    val dose = if (medicineDose.text.toString().isEmpty()) {
+                                        null
+                                    } else {
+                                        medicineDose.text.toString().toInt()
+                                    }
+                                    val countMedicines =
+                                        if (medicineCountValue.text.toString().isEmpty()) {
+                                            null
+                                        } else {
+                                            medicineCountValue.text.toString().toInt()
+                                        }
+
+                                    headacheViewModel.insertMedicinesDose(
+                                        MedicinesDoseEntity(
+                                            newMedicinesId,
+                                            dose,
+                                            countMedicines
+                                        )
+                                    )
+                                })
+
+
+                        })
                 } else {
                     val updateId: Long = deseriz.item.id
-                    headacheViewModel.updateItem(HeadacheEntity(updateId, dateHeadache, duration.progress))
-
-                    var localId: Long
-                 //   Log.d("change", localId.toString())
-                    //update обновляет один, сделать так чтобы каждую запись
-                        for (i in localizationId.indices) {
-                            localId = deseriz.localizationList[i].id
-                            Log.d("change_id", localId.toString())
-                            val localizationCheckBox: CheckBox = localization.getChildAt(i) as CheckBox
-                            if (localizationCheckBox.isChecked) {
-                                headacheViewModel.updateLocalization(LocalizationEntity(localId, updateId,
-                                    localizationCheckBox.text.toString()))
-                            }
-                        }
-                    val charactId = deseriz.characterList[0].id
-                        for (i in characterId.indices) {
-                            val characterCheckBox: CheckBox = character.getChildAt(i) as CheckBox
-                            if (characterCheckBox.isChecked) {
-                                headacheViewModel.updateCharacter(
-                                    CharacterEntity(charactId, updateId,
-                                        characterCheckBox.text.toString())
-                                )
-                            }
-                        }
-
-                        val name = medicineName.text.toString().ifEmpty {
-                            "-"
-                        }
-                        val dose = if (medicineDose.text.toString().isEmpty()) {
-                            null
-                        } else {
-                            medicineDose.text.toString().toInt()
-                        }
-                        val countMedicines = if (medicineCountValue.text.toString().isEmpty()) {
-                            null
-                        } else {
-                            medicineCountValue.text.toString().toInt()
-                        }
-                        val medicineId = deseriz.medicinesList[0].id
-                        headacheViewModel.updateMedicines(MedicinesEntity(medicineId,
+                    headacheViewModel.updateItem(
+                        HeadacheEntity(
                             updateId,
-                            name,
-                            dose,
-                            countMedicines))
+                            dateHeadache,
+                            duration.progress
+                        )
+                    )
 
+                    val localId: Long = deseriz.localizationList[0].id
+
+                    //   Log.d("change", localId.toString())
+                    //update обновляет один, сделать так чтобы каждую запись
+                    for (i in localizationId.indices) {
+                        val localizationCheckBox: CheckBox = localization.getChildAt(i) as CheckBox
+                        if (localizationCheckBox.isChecked) {
+                            headacheViewModel.updateLocalization(
+                                LocalizationEntity(
+                                    localId, updateId,
+                                    localizationCheckBox.text.toString()
+                                )
+                            )
+                        }
+                    }
+                    val charactId = deseriz.characterList[0].id
+                    for (i in characterId.indices) {
+                        val characterCheckBox: CheckBox = character.getChildAt(i) as CheckBox
+                        if (characterCheckBox.isChecked) {
+                            headacheViewModel.updateCharacter(
+                                CharacterEntity(
+                                    charactId, updateId,
+                                    characterCheckBox.text.toString()
+                                )
+                            )
+                        }
+                    }
+
+                    val name =
+                        if (medicineName.selectedItem.toString() == getString(R.string.add_new_medicines)) {
+                            "-"
+                        } else {
+                            medicineName.selectedItem.toString()
+                        }
+                    Log.d("select", medicineName.selectedItem.toString())
+                    Log.d("select_id", deseriz.medicinesList.toString())
+                    val updateMedicinesId: Long = deseriz.medicinesList[0].id
+                    headacheViewModel.updateMedicines(
+                        MedicinesEntity(
+                            updateId,
+                            name
+                        )
+                    )
+
+                    val dose = if (medicineDose.text.toString().isEmpty()) {
+                        null
+                    } else {
+                        medicineDose.text.toString().toInt()
+                    }
+                    val countMedicines = if (medicineCountValue.text.toString().isEmpty()) {
+                        null
+                    } else {
+                        medicineCountValue.text.toString().toInt()
+                    }
+
+                    headacheViewModel.updateMedicinesDose(
+                        MedicinesDoseEntity(
+                            updateMedicinesId,
+                            dose,
+                            countMedicines
+                        )
+                    )
                 }
             }
 
-                startActivity(intent)
+            startActivity(intent)
         }
         return view
     }
@@ -248,7 +337,7 @@ class AddNewFragment : Fragment() {
             AddNewFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
-                //    putString(ARG_PARAM2, param2)
+                    //    putString(ARG_PARAM2, param2)
                 }
             }
     }

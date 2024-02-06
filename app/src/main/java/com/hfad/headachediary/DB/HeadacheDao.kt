@@ -10,6 +10,7 @@ import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.HeadacheTuple
 import com.hfad.headachediary.Entity.MedicinesEntity
 import com.hfad.headachediary.Entity.LocalizationEntity
+import com.hfad.headachediary.Entity.MedicinesDoseEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,6 +20,11 @@ interface HeadacheDao {
         "SELECT * FROM headache_item"
     )
     fun getAllItems(): Flow<List<HeadacheTuple>>
+
+    @Query(
+        "SELECT * FROM medicines"
+    )
+    fun getAllMedicines(): Flow<List<MedicinesEntity>>
 
     @Insert
     suspend fun insertNewItem(headacheEntity: HeadacheEntity): Long
@@ -30,7 +36,10 @@ interface HeadacheDao {
     suspend fun insertNewCharacter(characterEntity: CharacterEntity)
 
     @Insert
-    suspend fun insertNewMedicines(medicinesEntity: MedicinesEntity)
+    suspend fun insertNewMedicines(medicinesEntity: MedicinesEntity): Long
+
+    @Insert
+    suspend fun insertNewMedicinesDose(medicinesDoseEntity: MedicinesDoseEntity)
 
     @Update
     fun updateItem(headacheEntity: HeadacheEntity)
@@ -43,4 +52,7 @@ interface HeadacheDao {
 
     @Update
     fun updateMedicines(medicinesEntity: MedicinesEntity)
+
+    @Update
+    fun updateMedicinesDose(medicinesDoseEntity: MedicinesDoseEntity)
 }

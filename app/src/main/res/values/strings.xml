@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">HeadacheDiary</string>
     <string name="add_new">add new record</string>
+    <string name="add_new_medicines">+ Добавить новое лекарство</string>
     <string name="localization">Локализация боли:</string>
     <string name="character">Вид боли:</string>
     <string name="duration_pain">Длительность:</string>

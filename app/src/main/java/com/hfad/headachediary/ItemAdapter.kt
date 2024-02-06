@@ -63,8 +63,8 @@ class ItemAdapter(
         }
         for (i in 0 until current.medicinesList.size) {
             medicinesList.add("${current.medicinesList[i].medicinesName ?: "-"}, " +
-                    "${current.medicinesList[i].medicinesDose ?: 0} ${holder.itemView.context.getString(R.string.dose_value)}, " +
-                    "${current.medicinesList[i].medicinesCount ?: 0} ${holder.itemView.context.getString(R.string.count_pieces)}")
+                    "${current.medicinesDoseList[i].medicinesDose ?: 0} ${holder.itemView.context.getString(R.string.dose_value)}, " +
+                    "${current.medicinesDoseList[i].medicinesCount ?: 0} ${holder.itemView.context.getString(R.string.count_pieces)}")
         }
         val date = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
         val formatDate = date.format(current.item.dateItem)

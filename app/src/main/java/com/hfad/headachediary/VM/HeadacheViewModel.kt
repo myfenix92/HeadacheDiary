@@ -12,6 +12,7 @@ import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.HeadacheTuple
 import com.hfad.headachediary.Entity.MedicinesEntity
 import com.hfad.headachediary.Entity.LocalizationEntity
+import com.hfad.headachediary.Entity.MedicinesDoseEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ import kotlinx.coroutines.withContext
 class HeadacheViewModel(private val repository: HeadacheRepository) : ViewModel() {
 
     val allItems: LiveData<List<HeadacheTuple>> = repository.allItems.asLiveData()
+    val allMedicines: LiveData<List<MedicinesEntity>> = repository.allMedicines.asLiveData()
 
     fun insertItem(headacheEntity: HeadacheEntity): MutableLiveData<Long> {
         val insertedItemId = MutableLiveData<Long>()
@@ -37,8 +39,16 @@ class HeadacheViewModel(private val repository: HeadacheRepository) : ViewModel(
         repository.insertCharacter(characterEntity)
     }
 
-    fun insertMedicines(medicinesEntity: MedicinesEntity) = viewModelScope.launch {
-        repository.insertMedicines(medicinesEntity)
+    fun insertMedicines(medicinesEntity: MedicinesEntity): MutableLiveData<Long> {
+        val insertedMedicinesId = MutableLiveData<Long>()
+        viewModelScope.launch {
+            insertedMedicinesId.value = repository.insertMedicines(medicinesEntity)
+        }
+        return insertedMedicinesId
+    }
+
+    fun insertMedicinesDose(medicinesDoseEntity: MedicinesDoseEntity) = viewModelScope.launch {
+        repository.insertMedicinesDose(medicinesDoseEntity)
     }
 
     fun updateItem(headacheEntity: HeadacheEntity) = CoroutineScope(Dispatchers.IO).launch {
@@ -55,6 +65,10 @@ class HeadacheViewModel(private val repository: HeadacheRepository) : ViewModel(
 
     fun updateMedicines(medicinesEntity: MedicinesEntity) = CoroutineScope(Dispatchers.IO).launch {
         repository.updateMedicines(medicinesEntity)
+    }
+
+    fun updateMedicinesDose(medicinesDoseEntity: MedicinesDoseEntity) = CoroutineScope(Dispatchers.IO).launch {
+        repository.updateMedicinesDose(medicinesDoseEntity)
     }
 }
 class HeadacheViewModelFactory(private val repository: HeadacheRepository) : ViewModelProvider.Factory {

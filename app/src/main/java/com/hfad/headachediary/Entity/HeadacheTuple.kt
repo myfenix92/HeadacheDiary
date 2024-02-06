@@ -22,5 +22,11 @@ data class HeadacheTuple(
         parentColumn = "id",
         entityColumn = "id_item"
     )
-    val medicinesList: List<MedicinesEntity>
+    val medicinesList: List<MedicinesEntity>,
+
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "id_item"
+    )
+    val medicinesDoseList: List<MedicinesDoseEntity>
 )

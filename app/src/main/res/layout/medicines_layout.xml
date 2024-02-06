@@ -4,14 +4,22 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <EditText
+
+        <Spinner
             android:id="@+id/medicine_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/medicines_name"
-            android:inputType="text"
-            android:textColorHint="#78909C"
-            android:autofillHints="" />
+            android:hint="@string/medicines_name"/>
+
+            <EditText
+                android:id="@+id/new_medicine_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/medicines_name"
+                android:inputType="text"
+                android:textColorHint="#78909C"
+                android:visibility="gone"
+                android:autofillHints="" />
 
         <EditText
             android:id="@+id/medicine_dose"
