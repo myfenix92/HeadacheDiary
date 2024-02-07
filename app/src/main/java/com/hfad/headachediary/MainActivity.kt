@@ -42,9 +42,6 @@ class MainActivity : AppCompatActivity() {
         })
         headacheViewModel.allMedicines.observe(this, Observer {item ->
             medicines = item
-
-          //  medicines = item.map { MedicinesEntity(it.id, it.idItem, it.medicinesName) }
-
         })
         val fabBtn = findViewById<FloatingActionButton>(R.id.fab_add)
         fabBtn.setOnClickListener {

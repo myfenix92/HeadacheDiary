@@ -6,8 +6,8 @@
     <string name="character">Вид боли:</string>
     <string name="duration_pain">Длительность:</string>
     <string name="medicines">Лекарства:</string>
-    <string name="medicines_name">Введите название лекарства…</string>
-    <string name="medicines_dose">Введите дозировку лекарства…</string>
+    <string name="medicines_choose">Выберите лекарство…</string>
+    <string name="medicines_name">Введите название лекарства и дозировку…</string>
     <string name="medicines_count">Количество:</string>
     <string name="ok_btn">ОК</string>
     <string name="cancel_btn">Отмена</string>

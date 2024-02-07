@@ -5,11 +5,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Spinner
+        <com.hfad.headachediary.NoDefaultSpinner
             android:id="@+id/medicine_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/medicines_name"/>
+            android:layout_height="wrap_content" />
 
             <EditText
                 android:id="@+id/new_medicine_name"
@@ -20,15 +19,6 @@
                 android:textColorHint="#78909C"
                 android:visibility="gone"
                 android:autofillHints="" />
-
-        <EditText
-            android:id="@+id/medicine_dose"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/medicines_dose"
-            android:inputType="number"
-            android:textColorHint="#78909C"
-            android:autofillHints="" />
 
 
         <LinearLayout

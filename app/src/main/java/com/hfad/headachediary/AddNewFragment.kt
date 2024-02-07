@@ -27,7 +27,6 @@ import com.hfad.headachediary.Entity.CharacterEntity
 import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.HeadacheTuple
 import com.hfad.headachediary.Entity.LocalizationEntity
-import com.hfad.headachediary.Entity.MedicinesDoseEntity
 import com.hfad.headachediary.Entity.MedicinesEntity
 import com.hfad.headachediary.VM.HeadacheViewModel
 import java.text.SimpleDateFormat
@@ -122,9 +121,8 @@ class AddNewFragment : Fragment() {
         val addMedicinesBtn: ImageButton = view.findViewById(R.id.add_medicines)
         val newMedicines: LinearLayout = view.findViewById(R.id.medicines)
         val child: View = layoutInflater.inflate(R.layout.medicines_layout, null)
-        val medicineName: Spinner = child.findViewById(R.id.medicine_name)
+        val medicineName: NoDefaultSpinner = child.findViewById(R.id.medicine_name)
         val medicineNewName: EditText = child.findViewById(R.id.new_medicine_name)
-        val medicineDose: EditText = child.findViewById(R.id.medicine_dose)
         val medicineCount: Spinner = child.findViewById(R.id.medicine_count)
         val medicineCountValue: TextView = child.findViewById(R.id.medicine_count_value)
         val medicinesNameArray: MutableList<String> = mutableListOf()
@@ -137,8 +135,8 @@ class AddNewFragment : Fragment() {
         val spinnerAdapter = activity?.applicationContext?.let {
             ArrayAdapter(
                 it,
-                android.R.layout.simple_spinner_item,
-                medicinesNameArray
+                android.R.layout.simple_spinner_dropdown_item,
+                medicinesNameArray.distinct()
             )
         }
         medicineName.adapter = spinnerAdapter
@@ -159,6 +157,7 @@ class AddNewFragment : Fragment() {
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
+
                 }
 
             }
@@ -187,7 +186,6 @@ class AddNewFragment : Fragment() {
             val listItem: RecyclerView? = activity?.findViewById(R.id.list_item)
             listItem?.visibility = RecyclerView.VISIBLE
         }
-//        Log.d("value_msg", deseriz.toString())
         val okBtn: Button = view.findViewById(R.id.add_btn)
         okBtn.setOnClickListener {
             val intent = Intent(activity?.applicationContext, MainActivity::class.java)
@@ -228,44 +226,14 @@ class AddNewFragment : Fragment() {
                             } else {
                                 medicineName.selectedItem.toString()
                             }
-                        var newMedicinesId: Long
-                        val dose = if (medicineDose.text.toString().isEmpty()) {
-                            null
-                        } else {
-                            medicineDose.text.toString().toInt()
-                        }
+
                         val countMedicines =
                             if (medicineCountValue.text.toString().isEmpty()) {
                                 null
                             } else {
                                 medicineCountValue.text.toString().toInt()
                             }
-                        val check = deseriz2.filter { it.medicinesName == name }.size
-                        if (check > 0) {
-                            newMedicinesId = deseriz2.filter { it.medicinesName == name }[0].id
-                            headacheViewModel.insertMedicinesDose(
-                                MedicinesDoseEntity(
-                                    newMedicinesId,
-                                    dose,
-                                    countMedicines
-                                )
-                            )
-                        } else {
-                            headacheViewModel.insertMedicines(MedicinesEntity(newId, name))
-                                .observe(viewLifecycleOwner, Observer {
-                                    newMedicinesId = it
-
-                                    headacheViewModel.insertMedicinesDose(
-                                        MedicinesDoseEntity(
-                                            newMedicinesId,
-                                            dose,
-                                            countMedicines
-                                        )
-                                    )
-                                })
-                        }
-
-
+                            headacheViewModel.insertMedicines(MedicinesEntity(newId, name, countMedicines))
                     })
             } else {
                 val updateId: Long = deseriz.item.id
@@ -311,33 +279,19 @@ class AddNewFragment : Fragment() {
                     } else {
                         medicineName.selectedItem.toString()
                     }
-                val updateMedicinesId: Long = deseriz.medicinesList[0].id
-                headacheViewModel.updateMedicines(
-                    MedicinesEntity(
-                        updateId,
-                        name
-                    )
-                )
-
-                val dose = if (medicineDose.text.toString().isEmpty()) {
-                    null
-                } else {
-                    medicineDose.text.toString().toInt()
-                }
                 val countMedicines = if (medicineCountValue.text.toString().isEmpty()) {
                     null
                 } else {
                     medicineCountValue.text.toString().toInt()
                 }
-
-                headacheViewModel.updateMedicinesDose(
-                    MedicinesDoseEntity(
-                        updateMedicinesId,
-                        dose,
+                val updateMedicinesId: Long = deseriz.medicinesList[0].id
+                headacheViewModel.updateMedicines(
+                    MedicinesEntity(
+                        updateId,
+                        name,
                         countMedicines
                     )
                 )
-
             }
 
             startActivity(intent)

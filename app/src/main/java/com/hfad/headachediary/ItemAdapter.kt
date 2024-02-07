@@ -55,6 +55,7 @@ class ItemAdapter(
         val localizationList = mutableListOf<String>()
         val characterList = mutableListOf<String>()
         val medicinesList = mutableListOf<String>()
+        val medicinesDoseList = mutableListOf<String>()
         for (i in 0 until current.localizationList.size) {
             localizationList.add(current.localizationList[i].localizationItem)
         }
@@ -62,17 +63,13 @@ class ItemAdapter(
             characterList.add(current.characterList[i].characterItem)
         }
         //ошибка при добавлении где доза и количество, хотя все добавляет как надо, отрисовка
-        // не работает должным образом мб надо как-то сопостовлять
-        Log.d("recycler", current.medicinesList.toString())
-        Log.d("recycler1", current.medicinesDoseList.toString())
-//        for (i in 0 until current.medicinesDoseList.size) {
-//            if ()
-//        }
-//        for (i in 0 until current.medicinesList.size) {
-//            medicinesList.add("${current.medicinesList[i].medicinesName ?: "-"}, " +
-//                    "${current.medicinesDoseList[i].medicinesDose ?: 0} ${holder.itemView.context.getString(R.string.dose_value)}, " +
-//                    "${current.medicinesDoseList[i].medicinesCount ?: 0} ${holder.itemView.context.getString(R.string.count_pieces)}")
-//        }
+        // не работает должным образом мб надо как-то сопоставлять
+
+        for (i in 0 until current.medicinesList.size) {
+            medicinesList.add("${current.medicinesList[i].medicinesName ?: "-"} " +
+                   "${holder.itemView.context.getString(R.string.dose_value)}, " +
+                    "${current.medicinesList[i].medicinesCount ?: 0} ${holder.itemView.context.getString(R.string.count_pieces)}")
+        }
         val date = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
         val formatDate = date.format(current.item.dateItem)
         holder.dateItem.text = holder.itemView.context.getString(R.string.text_date,
@@ -83,8 +80,8 @@ class ItemAdapter(
             characterList.joinToString(separator = ", "))
         holder.durationItem.text = holder.itemView.context.getString(R.string.text_duration,
             current.item.duration.toString())
-//        holder.medicinesItem.text = holder.itemView.context.getString(R.string.text_medicines,
-//            medicinesList.joinToString(separator = ", "))
+        holder.medicinesItem.text = holder.itemView.context.getString(R.string.text_medicines,
+            medicinesList.joinToString(separator = ", "))
 
         cardView.setOnClickListener { listener.onClick(current, position) }
     }

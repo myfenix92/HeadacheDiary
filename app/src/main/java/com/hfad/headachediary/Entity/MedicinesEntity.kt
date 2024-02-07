@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable
 
 @Entity(
     tableName = "medicines",
-    indices = [Index(value = ["id", "medicines_name"], unique = true)],
+    indices = [Index("id")],
     foreignKeys = [
         ForeignKey(
             entity = HeadacheEntity::class,
@@ -22,9 +22,8 @@ data class MedicinesEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "id_item") val idItem: Long,
     @ColumnInfo(name = "medicines_name") val medicinesName: String?,
-//    @ColumnInfo(name = "medicines_dose") val medicinesDose: Int?,
-//    @ColumnInfo(name = "medicines_count") val medicinesCount: Int?
+    @ColumnInfo(name = "medicines_count") val medicinesCount: Int?
 ) {
-    constructor(idItem: Long, medicinesName: String?)//, medicinesDose: Int?, medicinesCount: Int?)
-            : this(0, idItem, medicinesName)//, medicinesDose, medicinesCount)
+    constructor(idItem: Long, medicinesName: String, medicinesCount: Int?)
+            : this(0, idItem, medicinesName, medicinesCount)
 }

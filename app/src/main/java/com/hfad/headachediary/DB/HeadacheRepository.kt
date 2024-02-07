@@ -6,7 +6,6 @@ import com.hfad.headachediary.Entity.HeadacheEntity
 import com.hfad.headachediary.Entity.HeadacheTuple
 import com.hfad.headachediary.Entity.MedicinesEntity
 import com.hfad.headachediary.Entity.LocalizationEntity
-import com.hfad.headachediary.Entity.MedicinesDoseEntity
 import kotlinx.coroutines.flow.Flow
 
 class HeadacheRepository(private val headacheDao: HeadacheDao) {
@@ -33,12 +32,6 @@ class HeadacheRepository(private val headacheDao: HeadacheDao) {
         return headacheDao.insertNewMedicines(medicinesEntity)
     }
 
-    @Suppress("RedundantSuspendModifier")
-    @WorkerThread
-    suspend fun insertMedicinesDose(medicineDoseEntity: MedicinesDoseEntity) {
-        headacheDao.insertNewMedicinesDose(medicineDoseEntity)
-    }
-
     @WorkerThread
     fun updateItem(headacheEntity: HeadacheEntity) {
         headacheDao.updateItem(headacheEntity)
@@ -57,10 +50,5 @@ class HeadacheRepository(private val headacheDao: HeadacheDao) {
     @WorkerThread
     fun updateMedicines(medicinesEntity: MedicinesEntity) {
         headacheDao.updateMedicines(medicinesEntity)
-    }
-
-    @WorkerThread
-    fun updateMedicinesDose(medicinesDoseEntity: MedicinesDoseEntity) {
-        headacheDao.updateMedicinesDose(medicinesDoseEntity)
     }
 }
