@@ -30,11 +30,8 @@ import com.hfad.headachediary.Entity.LocalizationEntity
 import com.hfad.headachediary.Entity.MedicinesDoseEntity
 import com.hfad.headachediary.Entity.MedicinesEntity
 import com.hfad.headachediary.VM.HeadacheViewModel
-import kotlinx.coroutines.job
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 
@@ -60,9 +57,17 @@ class AddNewFragment : Fragment() {
         val bundle = arguments
         val message = bundle!!.getString("param1")
         val message2 = bundle.getString("param2")
-        var deseriz = gson.fromJson(message, HeadacheTuple::class.java)
+        var deseriz: HeadacheTuple? = null
+        val itemTypeDeseriz = object : TypeToken<HeadacheTuple>() {}.type
+        deseriz = if (message.toString() == "new record") {
+            null
+        } else {
+            gson.fromJson<HeadacheTuple>(message, itemTypeDeseriz)
+        }
+        //  var deseriz = gson.fromJson(message, HeadacheTuple::class.java)
         val itemType = object : TypeToken<List<MedicinesEntity>>() {}.type
         var deseriz2 = gson.fromJson<List<MedicinesEntity>>(message2, itemType)
+        Log.d("value_message", deseriz2.toString())
 
 
         val calendar: CalendarView = view.findViewById(R.id.calendar_headache)
@@ -182,63 +187,73 @@ class AddNewFragment : Fragment() {
             val listItem: RecyclerView? = activity?.findViewById(R.id.list_item)
             listItem?.visibility = RecyclerView.VISIBLE
         }
-
+//        Log.d("value_msg", deseriz.toString())
         val okBtn: Button = view.findViewById(R.id.add_btn)
         okBtn.setOnClickListener {
             val intent = Intent(activity?.applicationContext, MainActivity::class.java)
-            if (message != null) {
-                if (message.isEmpty()) {
-                    var newId: Long
-                    headacheViewModel.insertItem(HeadacheEntity(dateHeadache, duration.progress))
-                        .observe(viewLifecycleOwner, Observer {
-                            newId = it
-                            for (i in localizationId.indices) {
-                                val localizationCheckBox: CheckBox =
-                                    localization.getChildAt(i) as CheckBox
-                                if (localizationCheckBox.isChecked) {
-                                    headacheViewModel.insertLocalization(
-                                        LocalizationEntity(
-                                            newId,
-                                            localizationCheckBox.text.toString()
-                                        )
+            if (deseriz == null) {
+                var newId: Long
+                headacheViewModel.insertItem(HeadacheEntity(dateHeadache, duration.progress))
+                    .observe(viewLifecycleOwner, Observer {
+                        newId = it
+                        for (i in localizationId.indices) {
+                            val localizationCheckBox: CheckBox =
+                                localization.getChildAt(i) as CheckBox
+                            if (localizationCheckBox.isChecked) {
+                                headacheViewModel.insertLocalization(
+                                    LocalizationEntity(
+                                        newId,
+                                        localizationCheckBox.text.toString()
                                     )
-                                }
+                                )
                             }
+                        }
 
-                            for (i in characterId.indices) {
-                                val characterCheckBox: CheckBox =
-                                    character.getChildAt(i) as CheckBox
-                                if (characterCheckBox.isChecked) {
-                                    headacheViewModel.insertCharacter(
-                                        CharacterEntity(
-                                            newId,
-                                            characterCheckBox.text.toString()
-                                        )
+                        for (i in characterId.indices) {
+                            val characterCheckBox: CheckBox =
+                                character.getChildAt(i) as CheckBox
+                            if (characterCheckBox.isChecked) {
+                                headacheViewModel.insertCharacter(
+                                    CharacterEntity(
+                                        newId,
+                                        characterCheckBox.text.toString()
                                     )
-                                }
+                                )
                             }
-                            val name =
-                                if (medicineName.selectedItem.toString() == getString(R.string.add_new_medicines)) {
-                                    medicineNewName.text.toString()
-                                } else {
-                                    medicineName.selectedItem.toString()
-                                }
-                            var newMedicinesId: Long
+                        }
+
+                        val name =
+                            if (medicineName.selectedItem.toString() == getString(R.string.add_new_medicines)) {
+                                medicineNewName.text.toString()
+                            } else {
+                                medicineName.selectedItem.toString()
+                            }
+                        var newMedicinesId: Long
+                        val dose = if (medicineDose.text.toString().isEmpty()) {
+                            null
+                        } else {
+                            medicineDose.text.toString().toInt()
+                        }
+                        val countMedicines =
+                            if (medicineCountValue.text.toString().isEmpty()) {
+                                null
+                            } else {
+                                medicineCountValue.text.toString().toInt()
+                            }
+                        val check = deseriz2.filter { it.medicinesName == name }.size
+                        if (check > 0) {
+                            newMedicinesId = deseriz2.filter { it.medicinesName == name }[0].id
+                            headacheViewModel.insertMedicinesDose(
+                                MedicinesDoseEntity(
+                                    newMedicinesId,
+                                    dose,
+                                    countMedicines
+                                )
+                            )
+                        } else {
                             headacheViewModel.insertMedicines(MedicinesEntity(newId, name))
                                 .observe(viewLifecycleOwner, Observer {
                                     newMedicinesId = it
-
-                                    val dose = if (medicineDose.text.toString().isEmpty()) {
-                                        null
-                                    } else {
-                                        medicineDose.text.toString().toInt()
-                                    }
-                                    val countMedicines =
-                                        if (medicineCountValue.text.toString().isEmpty()) {
-                                            null
-                                        } else {
-                                            medicineCountValue.text.toString().toInt()
-                                        }
 
                                     headacheViewModel.insertMedicinesDose(
                                         MedicinesDoseEntity(
@@ -248,82 +263,81 @@ class AddNewFragment : Fragment() {
                                         )
                                     )
                                 })
+                        }
 
 
-                        })
-                } else {
-                    val updateId: Long = deseriz.item.id
-                    headacheViewModel.updateItem(
-                        HeadacheEntity(
-                            updateId,
-                            dateHeadache,
-                            duration.progress
-                        )
+                    })
+            } else {
+                val updateId: Long = deseriz.item.id
+                headacheViewModel.updateItem(
+                    HeadacheEntity(
+                        updateId,
+                        dateHeadache,
+                        duration.progress
                     )
+                )
 
-                    val localId: Long = deseriz.localizationList[0].id
+                val localId: Long = deseriz.localizationList[0].id
 
-                    //   Log.d("change", localId.toString())
-                    //update обновляет один, сделать так чтобы каждую запись
-                    for (i in localizationId.indices) {
-                        val localizationCheckBox: CheckBox = localization.getChildAt(i) as CheckBox
-                        if (localizationCheckBox.isChecked) {
-                            headacheViewModel.updateLocalization(
-                                LocalizationEntity(
-                                    localId, updateId,
-                                    localizationCheckBox.text.toString()
-                                )
+                //   Log.d("change", localId.toString())
+                //update обновляет один, сделать так чтобы каждую запись
+                for (i in localizationId.indices) {
+                    val localizationCheckBox: CheckBox = localization.getChildAt(i) as CheckBox
+                    if (localizationCheckBox.isChecked) {
+                        headacheViewModel.updateLocalization(
+                            LocalizationEntity(
+                                localId, updateId,
+                                localizationCheckBox.text.toString()
                             )
-                        }
-                    }
-                    val charactId = deseriz.characterList[0].id
-                    for (i in characterId.indices) {
-                        val characterCheckBox: CheckBox = character.getChildAt(i) as CheckBox
-                        if (characterCheckBox.isChecked) {
-                            headacheViewModel.updateCharacter(
-                                CharacterEntity(
-                                    charactId, updateId,
-                                    characterCheckBox.text.toString()
-                                )
-                            )
-                        }
-                    }
-
-                    val name =
-                        if (medicineName.selectedItem.toString() == getString(R.string.add_new_medicines)) {
-                            "-"
-                        } else {
-                            medicineName.selectedItem.toString()
-                        }
-                    Log.d("select", medicineName.selectedItem.toString())
-                    Log.d("select_id", deseriz.medicinesList.toString())
-                    val updateMedicinesId: Long = deseriz.medicinesList[0].id
-                    headacheViewModel.updateMedicines(
-                        MedicinesEntity(
-                            updateId,
-                            name
                         )
-                    )
-
-                    val dose = if (medicineDose.text.toString().isEmpty()) {
-                        null
-                    } else {
-                        medicineDose.text.toString().toInt()
                     }
-                    val countMedicines = if (medicineCountValue.text.toString().isEmpty()) {
-                        null
-                    } else {
-                        medicineCountValue.text.toString().toInt()
-                    }
-
-                    headacheViewModel.updateMedicinesDose(
-                        MedicinesDoseEntity(
-                            updateMedicinesId,
-                            dose,
-                            countMedicines
-                        )
-                    )
                 }
+                val charactId = deseriz.characterList[0].id
+                for (i in characterId.indices) {
+                    val characterCheckBox: CheckBox = character.getChildAt(i) as CheckBox
+                    if (characterCheckBox.isChecked) {
+                        headacheViewModel.updateCharacter(
+                            CharacterEntity(
+                                charactId, updateId,
+                                characterCheckBox.text.toString()
+                            )
+                        )
+                    }
+                }
+
+                val name =
+                    if (medicineName.selectedItem.toString() == getString(R.string.add_new_medicines)) {
+                        "-"
+                    } else {
+                        medicineName.selectedItem.toString()
+                    }
+                val updateMedicinesId: Long = deseriz.medicinesList[0].id
+                headacheViewModel.updateMedicines(
+                    MedicinesEntity(
+                        updateId,
+                        name
+                    )
+                )
+
+                val dose = if (medicineDose.text.toString().isEmpty()) {
+                    null
+                } else {
+                    medicineDose.text.toString().toInt()
+                }
+                val countMedicines = if (medicineCountValue.text.toString().isEmpty()) {
+                    null
+                } else {
+                    medicineCountValue.text.toString().toInt()
+                }
+
+                headacheViewModel.updateMedicinesDose(
+                    MedicinesDoseEntity(
+                        updateMedicinesId,
+                        dose,
+                        countMedicines
+                    )
+                )
+
             }
 
             startActivity(intent)

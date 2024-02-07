@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable
 
 @Entity(
     tableName = "medicines",
-    indices = [Index("id")],
+    indices = [Index(value = ["id", "medicines_name"], unique = true)],
     foreignKeys = [
         ForeignKey(
             entity = HeadacheEntity::class,

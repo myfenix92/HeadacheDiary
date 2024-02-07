@@ -68,7 +68,7 @@ abstract class HeadacheDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     HeadacheDatabase::class.java,
-                    "db-11"
+                    "db-13"
                 ).addCallback(HeadacheDBCallback(scope)).build()
                 INSTANCE = instance
                 instance

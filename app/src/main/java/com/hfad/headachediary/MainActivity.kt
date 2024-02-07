@@ -23,11 +23,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        var medicines: List<MedicinesEntity> = mutableListOf()
 
         val recyclerView: RecyclerView = findViewById(R.id.list_item)
         val listener: ItemAdapter.Listener = object : ItemAdapter.Listener {
             override fun onClick(data: HeadacheTuple, position: Int) {
-                changeRecord(data)
+                changeRecord(data, medicines)
             }
 
         }
@@ -37,17 +38,17 @@ class MainActivity : AppCompatActivity() {
         headacheViewModel.allItems.observe(this, Observer {item ->
             val list = item.sortedBy { it.item.dateItem }
             list.let { adapter.setItems(it) }
+
         })
-        var medicines: List<MedicinesEntity> = mutableListOf()
         headacheViewModel.allMedicines.observe(this, Observer {item ->
-            Log.d("value", item.map { MedicinesEntity(it.id, it.idItem, it.medicinesName) }.toString())
             medicines = item
+
           //  medicines = item.map { MedicinesEntity(it.id, it.idItem, it.medicinesName) }
 
         })
         val fabBtn = findViewById<FloatingActionButton>(R.id.fab_add)
         fabBtn.setOnClickListener {
-            medicines?.let { it1 -> addNewRecord(it1) }
+            addNewRecord(medicines)
         }
 
 
@@ -58,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         val mFragmentTransaction = mFragmentManager.beginTransaction()
         val mFragment = AddNewFragment()
         val mBundle = Bundle()
+        mBundle.putString("param1", "new record")
         mBundle.putString("param2", gson.toJson(data))
 
 
@@ -68,13 +70,14 @@ class MainActivity : AppCompatActivity() {
             listItem.visibility = RecyclerView.INVISIBLE
     }
 
-    private fun changeRecord(data: HeadacheTuple) {
+    private fun changeRecord(data: HeadacheTuple, data1: List<MedicinesEntity>) {
         val mFragmentManager = supportFragmentManager
         val mFragmentTransaction = mFragmentManager.beginTransaction()
         val mFragment = AddNewFragment()
 
         val mBundle = Bundle()
         mBundle.putString("param1", gson.toJson(data))
+        mBundle.putString("param2", gson.toJson(data1))
         mFragment.arguments = mBundle
         mFragmentTransaction.add(R.id.main_container, mFragment).commit()
        // AddNewFragment.newInstance(gson.toJson(data))
