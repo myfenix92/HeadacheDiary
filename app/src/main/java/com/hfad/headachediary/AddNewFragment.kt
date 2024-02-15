@@ -40,6 +40,7 @@ private const val ARG_PARAM2 = "param2"
 class AddNewFragment : Fragment() {
     private val gson = Gson()
     private val headacheViewModel: HeadacheViewModel by activityViewModels<HeadacheViewModel>()
+    private var isAddMedicine: Boolean = false
 //    <HeadacheViewModel>{
 //        HeadacheViewModelFactory((activity?.application as HeadacheApplication).repository)
 //    }
@@ -56,6 +57,11 @@ class AddNewFragment : Fragment() {
         val bundle = arguments
         val message = bundle!!.getString("param1")
         val message2 = bundle.getString("param2")
+
+        Log.d("message_1", message.toString())
+        Log.d("message_2", message2.toString())
+        Log.d("message_1_change", message.toString())
+        Log.d("message_2_change", message2.toString())
         var deseriz: HeadacheTuple? = null
         val itemTypeDeseriz = object : TypeToken<HeadacheTuple>() {}.type
         deseriz = if (message.toString() == "new record") {
@@ -63,6 +69,7 @@ class AddNewFragment : Fragment() {
         } else {
             gson.fromJson<HeadacheTuple>(message, itemTypeDeseriz)
         }
+
         //  var deseriz = gson.fromJson(message, HeadacheTuple::class.java)
         val itemType = object : TypeToken<List<MedicinesEntity>>() {}.type
         var deseriz2 = gson.fromJson<List<MedicinesEntity>>(message2, itemType)
@@ -78,6 +85,7 @@ class AddNewFragment : Fragment() {
                 dateHeadache = date.time
             }
         }
+
 
         val localization: LinearLayout = view.findViewById(R.id.localization)
         val localizationValue = resources.getStringArray(R.array.localization_pain)
@@ -121,11 +129,12 @@ class AddNewFragment : Fragment() {
         val addMedicinesBtn: ImageButton = view.findViewById(R.id.add_medicines)
         val newMedicines: LinearLayout = view.findViewById(R.id.medicines)
         val child: View = layoutInflater.inflate(R.layout.medicines_layout, null)
-        val medicineName: NoDefaultSpinner = child.findViewById(R.id.medicine_name)
+        val medicineName: Spinner = child.findViewById(R.id.medicine_name)
         val medicineNewName: EditText = child.findViewById(R.id.new_medicine_name)
         val medicineCount: Spinner = child.findViewById(R.id.medicine_count)
         val medicineCountValue: TextView = child.findViewById(R.id.medicine_count_value)
         val medicinesNameArray: MutableList<String> = mutableListOf()
+        medicinesNameArray.add("")
         if (deseriz2.isNotEmpty()) {
             for (i in deseriz2.indices) {
                 medicinesNameArray.add(deseriz2[i].medicinesName.toString())
@@ -141,7 +150,7 @@ class AddNewFragment : Fragment() {
         }
         medicineName.adapter = spinnerAdapter
         addMedicinesBtn.setOnClickListener {
-
+            isAddMedicine = true
             medicineName.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -178,6 +187,39 @@ class AddNewFragment : Fragment() {
 
             }
             newMedicines.addView(child)
+        }
+
+        val dateChange = deseriz?.item?.dateItem
+        val durationChange = deseriz?.item?.duration
+        val localizationChange = mutableListOf<String>()
+        val characterChange = mutableListOf<String>()
+        val medicinesChange = mutableListOf<String>()
+        if (message.toString() != "new record") {
+            if (dateChange != null) {
+                calendar.setDate (dateChange, true, true)
+            }
+
+            for (i in 0 until deseriz?.localizationList?.size!!) {
+                for (j in localizationId.indices) {
+                    val localizationCheckBox: CheckBox = localization.getChildAt(j) as CheckBox
+                    if (localizationCheckBox.text == deseriz.localizationList[i].localizationItem) {
+                        localizationCheckBox.isChecked = true
+                    }
+                }
+            }
+
+            for (i in 0 until deseriz?.characterList?.size!!) {
+                for (j in localizationId.indices) {
+                    val characterCheckBox: CheckBox = character.getChildAt(j) as CheckBox
+                    if (characterCheckBox.text == deseriz.characterList[i].characterItem) {
+                        characterCheckBox.isChecked = true
+                    }
+                }
+            }
+
+            if (durationChange != null) {
+                duration.progress = durationChange
+            }
         }
 
         val cancelBtn: Button = view.findViewById(R.id.cancel_btn)
@@ -221,17 +263,26 @@ class AddNewFragment : Fragment() {
                         }
 
                         val name =
-                            if (medicineName.selectedItem.toString() == getString(R.string.add_new_medicines)) {
-                                medicineNewName.text.toString()
+                            if (isAddMedicine) {
+                                if (medicineName.selectedItem.toString() == getString(R.string.add_new_medicines)) {
+                                    medicineNewName.text.toString()
+                                } else {
+                                    medicineName.selectedItem.toString()
+                                }
                             } else {
-                                medicineName.selectedItem.toString()
+                                ""
                             }
 
+
                         val countMedicines =
-                            if (medicineCountValue.text.toString().isEmpty()) {
-                                null
+                            if (isAddMedicine) {
+                                if (medicineCountValue.text.toString().isEmpty()) {
+                                    null
+                                } else {
+                                    medicineCountValue.text.toString().toInt()
+                                }
                             } else {
-                                medicineCountValue.text.toString().toInt()
+                                null
                             }
                             headacheViewModel.insertMedicines(MedicinesEntity(newId, name, countMedicines))
                     })
@@ -279,6 +330,7 @@ class AddNewFragment : Fragment() {
                     } else {
                         medicineName.selectedItem.toString()
                     }
+
                 val countMedicines = if (medicineCountValue.text.toString().isEmpty()) {
                     null
                 } else {
